@@ -6,79 +6,105 @@
 
 int main (){
 
-char tabuleiro [10][10] ; // matriz para o tabuleiro
-int c, l; 
+#include <stdio.h>
+#include <stdlib.h>
 
+#define TAM 10
+#define TAM_HAB 5
+#define NAVIO '3'
+#define AGUA '0'
+#define HABILIDADE '5'
 
-for (c=0; c < 10; c++){ //para percorrer as colunas do tabuleiro
-   for (l = 0 ; l < 10 ; l++){ // para percorrer as linhas do tabuleiro
-    tabuleiro[l][c] = '0'; // para preencher o tabuleiro com 0 representando a água
-   }
-}
-
-// posicionando o navio horizontal
- int linhaH = 1;//linha horizontal do navio
- int colH = 3; //coluna do navio
- for(int i = 0; i<3;i++){
-	if (tabuleiro[linhaH][colH + i] == '3'){
-		 printf("Erro: sobreposição no navio horizontal.\n");
-            return 1;
-	}
-	 tabuleiro[linhaH][colH + i] = '3';
- }
-//posicionando os navios na vertical
- int linhaV = 3; // linha vertical do navio
- int colV = 6; // coluna vertical do navio
- for(int i = 0; i < 3; i++){
-	if(tabuleiro[linhaV+i][colV]) == '3'{
-		 printf("Erro: sobreposição no navio vertical.\n");
-            return 1;
-	}
-	tabuleiro[linhaV + i][colV] = '3';
- }
-
- // ======= NAVIO DIAGONAL PRINCIPAL ======= (linha e coluna aumentam)
-    int linhaD1 = 5;
-    int colD1   = 1;
-    for (int i = 0; i < 3; i++) {
-        if (tabuleiro[linhaD1 + i][colD1 + i] == '3') {
-            printf("Erro: sobreposição na diagonal principal.\n");
-            return 1;
+void inicializarTabuleiro(char tabuleiro[TAM][TAM]) {
+    for (int i = 0; i < TAM; i++) {
+        for (int j = 0; j < TAM; j++) {
+            tabuleiro[i][j] = AGUA;
         }
-        tabuleiro[linhaD1 + i][colD1 + i] = '3';
     }
+}
 
-    // ======= NAVIO DIAGONAL SECUNDÁRIA ======= (linha aumenta, coluna diminui)
-    int linhaD2 = 0;
-    int colD2   = 9;
+void posicionarNavios(char tabuleiro[TAM][TAM]) {
     for (int i = 0; i < 3; i++) {
-        if (tabuleiro[linhaD2 + i][colD2 - i] == '3') {
-            printf("Erro: sobreposição na diagonal secundária.\n");
-            return 1;
-        }
-        tabuleiro[linhaD2 + i][colD2 - i] = '3';
+        tabuleiro[2][4 + i] = NAVIO;
+        tabuleiro[5 + i][1] = NAVIO;
     }
-
-
-//imprimir o tabulerio[
-printf("   "); // para alinha as linhas com as colunas
-for (c = 0; c <10; c++){
-	printf("%2d", c +1);
 }
-printf("\n"); // imprimiu as linhas
 
-for (l = 0; l<10; l++){
-	printf("  %c ",'A'+ l);
-	for(c = 0; c <10; c++){
-		 if (tabuleiro[l][c] == '3'){
-		 	printf("  3 ");
-		 } else {
-		 	printf(" 0  ");
-		 }
-	}
-	printf("\n");
+void gerarCone(int matriz[TAM_HAB][TAM_HAB]) {
+    for (int i = 0; i < TAM_HAB; i++) {
+        for (int j = 0; j < TAM_HAB; j++) {
+            matriz[i][j] = (j >= TAM_HAB / 2 - i && j <= TAM_HAB / 2 + i) ? 1 : 0;
+        }
+    }
 }
-return 0;
+
+void gerarCruz(int matriz[TAM_HAB][TAM_HAB]) {
+    for (int i = 0; i < TAM_HAB; i++) {
+        for (int j = 0; j < TAM_HAB; j++) {
+            matriz[i][j] = (i == TAM_HAB / 2 || j == TAM_HAB / 2) ? 1 : 0;
+        }
+    }
+}
+
+void gerarOctaedro(int matriz[TAM_HAB][TAM_HAB]) {
+    for (int i = 0; i < TAM_HAB; i++) {
+        for (int j = 0; j < TAM_HAB; j++) {
+            matriz[i][j] = (abs(i - TAM_HAB / 2) + abs(j - TAM_HAB / 2) <= TAM_HAB / 2) ? 1 : 0;
+        }
+    }
+}
+
+void aplicarHabilidade(char tabuleiro[TAM][TAM], int matriz[TAM_HAB][TAM_HAB], int origem_l, int origem_c) {
+    for (int i = 0; i < TAM_HAB; i++) {
+        for (int j = 0; j < TAM_HAB; j++) {
+            int linha = origem_l - TAM_HAB / 2 + i;
+            int coluna = origem_c - TAM_HAB / 2 + j;
+            if (linha >= 0 && linha < TAM && coluna >= 0 && coluna < TAM) {
+                if (matriz[i][j] == 1 && tabuleiro[linha][coluna] == AGUA) {
+                    tabuleiro[linha][coluna] = HABILIDADE;
+                }
+            }
+        }
+    }
+}
+
+void imprimirTabuleiro(char tabuleiro[TAM][TAM]) {
+    printf("   ");
+    for (int c = 0; c < TAM; c++) {
+        printf("%2d", c + 1);
+    }
+    printf("\n");
+
+    for (int l = 0; l < TAM; l++) {
+        printf(" %c ", 'A' + l);
+        for (int c = 0; c < TAM; c++) {
+            printf(" %c ", tabuleiro[l][c]);
+        }
+        printf("\n");
+    }
+}
+
+int main() {
+    char tabuleiro[TAM][TAM];
+    int cone[TAM_HAB][TAM_HAB];
+    int cruz[TAM_HAB][TAM_HAB];
+    int octaedro[TAM_HAB][TAM_HAB];
+
+    inicializarTabuleiro(tabuleiro);
+    posicionarNavios(tabuleiro);
+
+    gerarCone(cone);
+    gerarCruz(cruz);
+    gerarOctaedro(octaedro);
+
+    aplicarHabilidade(tabuleiro, cone, 3, 4);       // aplica cone no ponto D5
+    aplicarHabilidade(tabuleiro, cruz, 6, 6);       // aplica cruz no ponto G7
+    aplicarHabilidade(tabuleiro, octaedro, 1, 8);   // aplica octaedro no ponto B9
+
+    imprimirTabuleiro(tabuleiro);
+
+    return 0;
+}
 }
 
 
