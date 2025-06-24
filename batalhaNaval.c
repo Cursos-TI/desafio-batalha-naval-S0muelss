@@ -4,37 +4,57 @@
 // Este código inicial serve como base para o desenvolvimento do sistema de Batalha Naval.
 // Siga os comentários para implementar cada parte do desafio.
 
-int main() {
-    // Nível Novato - Posicionamento dos Navios
-    // Sugestão: Declare uma matriz bidimensional para representar o tabuleiro (Ex: int tabuleiro[5][5];).
-    // Sugestão: Posicione dois navios no tabuleiro, um verticalmente e outro horizontalmente.
-    // Sugestão: Utilize `printf` para exibir as coordenadas de cada parte dos navios.
+int main (){
+//declaração para criar o tabulerio
+char tabuleiro [10][10] ; // matriz para o tabuleiro
+int c, l; //variáveis para linhas e colunas
+// declaração de navios
+int navioH [3] = {3,3,3}; // navio horizontal ocupando 3 posições
+int navioV [3] =  {3,3,3}; // navio vertical ocupando 3 posições
 
-    // Nível Aventureiro - Expansão do Tabuleiro e Posicionamento Diagonal
-    // Sugestão: Expanda o tabuleiro para uma matriz 10x10.
-    // Sugestão: Posicione quatro navios no tabuleiro, incluindo dois na diagonal.
-    // Sugestão: Exiba o tabuleiro completo no console, mostrando 0 para posições vazias e 3 para posições ocupadas.
+// cordenadas dos navio
+int linhaH = 1; // linha horizontal do navio
+int colH  = 3; // coluna horizontal do navio
 
-    // Nível Mestre - Habilidades Especiais com Matrizes
-    // Sugestão: Crie matrizes para representar habilidades especiais como cone, cruz, e octaedro.
-    // Sugestão: Utilize estruturas de repetição aninhadas para preencher as áreas afetadas por essas habilidades no tabuleiro.
-    // Sugestão: Exiba o tabuleiro com as áreas afetadas, utilizando 0 para áreas não afetadas e 1 para áreas atingidas.
+int linhaV = 3;   // Linha inicial do navio vertical
+int colV = 6;     // Coluna do navio vertical
 
-    // Exemplos de exibição das habilidades:
-    // Exemplo para habilidade em cone:
-    // 0 0 1 0 0
-    // 0 1 1 1 0
-    // 1 1 1 1 1
-    
-    // Exemplo para habilidade em octaedro:
-    // 0 0 1 0 0
-    // 0 1 1 1 0
-    // 0 0 1 0 0
 
-    // Exemplo para habilidade em cruz:
-    // 0 0 1 0 0
-    // 1 1 1 1 1
-    // 0 0 1 0 0
-
-    return 0;
+for (c=0; c < 10; c++){ //para percorrer as colunas do tabuleiro
+   for (l = 0 ; l < 10 ; l++){ // para percorrer as linhas do tabuleiro
+    tabuleiro[l][c] = '0'; // para preencher o tabuleiro com 0 representando a água
+   }
 }
+
+// posicionando o navio horizontal
+ for (int i = 0 ; i<3; i++){
+ 	tabuleiro[linhaH  ][colH+i]  = '3';
+ }
+//posicionando os navios na vertical
+for (int i = 0 ; i<3; i++){
+ 	tabuleiro[linhaV + i][colV] = '3';
+}
+
+//imprimir o tabulerio[
+printf("   "); // para alinha as linhas com as colunas
+for (c = 0; c <10; c++){
+	printf("%2d", c +1);
+}
+printf("\n"); // imprimiu as linhas
+
+for (l = 0; l<10; l++){
+	printf("  %c ",'A'+ l);
+	for(c = 0; c <10; c++){
+		 if (tabuleiro[l][c] == '3'){
+		 	printf("  3 ");
+		 } else {
+		 	printf(" 0  ");
+		 }
+	}
+	printf("\n");
+}
+return 0;
+}
+
+
+   
